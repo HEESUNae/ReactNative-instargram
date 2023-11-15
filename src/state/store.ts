@@ -1,8 +1,8 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
-import { feedListReducer } from './reducers/FeedList';
-import { userInfoReducer } from './reducers/UserInfo';
+import { TypeFeedListReducer, feedListReducer } from './reducers/FeedList';
+import { TypeUserInfoReducer, userInfoReducer } from './reducers/UserInfo';
 
 const rootReducer = combineReducers({
   feedList: feedListReducer,
@@ -12,3 +12,6 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer, applyMiddleware(logger, thunk));
 
 export default store;
+
+// RootReducer Type
+export type RootReducer = { userInfo: TypeUserInfoReducer; feedList: TypeFeedListReducer };
