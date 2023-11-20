@@ -1,5 +1,5 @@
-import { ThunkAction } from 'redux-thunk';
-import { FeedInfo } from '../../@types/feedInfo';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { FeedInfo } from '../../@types/FeedInfo';
 import { sleep } from '../../utils/sleep';
 import { RootReducer } from '../store';
 
@@ -25,12 +25,17 @@ export const createFeedSuccess = (item: FeedInfo) => ({
 export const createFeedFailure = () => ({ type: CREATE_FEED_FAILURE });
 
 // 액션함수 - favoriteFeed
-export const FAVORITE_FEED_REQUEST = 'CREATE_FEED_REQUEST' as const;
-export const FAVORITE_FEED_SUCCESS = 'CREATE_FEED_SUCCESS' as const;
-export const FAVORITE_FEED_FAILURE = 'CREATE_FEED_FAILURE' as const;
+export const FAVORITE_FEED_REQUEST = 'FAVORITE_FEED_REQUEST' as const;
+export const FAVORITE_FEED_SUCCESS = 'FAVORITE_FEED_SUCCESS' as const;
+export const FAVORITE_FEED_FAILURE = 'FAVORITE_FEED_FAILURE' as const;
 
 export const favoriteFeedRequest = () => ({ type: FAVORITE_FEED_REQUEST });
-export const favoriteFeedSuccess = (feedId: FeedInfo['id']) => ({ type: FAVORITE_FEED_SUCCESS, feedId });
+export const favoriteFeedSuccess = (feedId: FeedInfo['id'], myId: string, action: 'add' | 'del') => ({
+  type: FAVORITE_FEED_SUCCESS,
+  feedId,
+  myId,
+  action,
+});
 export const favoriteFeedFailure = () => ({ type: FAVORITE_FEED_FAILURE });
 
 export const getFeedList = (): TypeFeedListThunkAction => async (dispatch) => {
@@ -45,7 +50,7 @@ export const getFeedList = (): TypeFeedListThunkAction => async (dispatch) => {
           name: 'heesun',
           uid: 'uid_heesun',
         },
-        imageUrl: 'image_url',
+        imageUrl: 'https://docs.expo.dev/static/images/tutorial/background-image.png',
         likeHistory: ['like01', 'like02', 'like03'],
         createAt: new Date().getTime(),
       },
@@ -56,8 +61,8 @@ export const getFeedList = (): TypeFeedListThunkAction => async (dispatch) => {
           name: 'heesun',
           uid: 'uid_heesun',
         },
-        imageUrl: 'image_url',
-        likeHistory: ['like01', 'like02', 'like03'],
+        imageUrl: 'https://docs.expo.dev/static/images/tutorial/background-image.png',
+        likeHistory: ['like01', 'like02'],
         createAt: new Date().getTime(),
       },
       {
@@ -67,8 +72,8 @@ export const getFeedList = (): TypeFeedListThunkAction => async (dispatch) => {
           name: 'heesun',
           uid: 'uid_heesun',
         },
-        imageUrl: 'image_url',
-        likeHistory: ['like01', 'like02', 'like03'],
+        imageUrl: 'https://docs.expo.dev/static/images/tutorial/background-image.png',
+        likeHistory: ['like01'],
         createAt: new Date().getTime(),
       },
     ])
@@ -101,13 +106,26 @@ export const createFeed =
 
 export const favoriteFeed =
   (item: FeedInfo): TypeFeedListThunkAction =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     dispatch(favoriteFeedRequest());
+
+    // 로그인 확인 여부
+    const myId = getState().userInfo.userInfo?.uid || null;
+    if (myId === null) {
+      dispatch(favoriteFeedFailure());
+      return;
+    }
+
     await sleep(500);
-    dispatch(favoriteFeedSuccess(item.id));
+
+    const hasMyId = item.likeHistory.some((likeUserId) => likeUserId === myId);
+    dispatch(favoriteFeedSuccess(item.id, myId, hasMyId ? 'del' : 'add'));
   };
 
 // dispatch Type
+export type TypeFeedListDispatch = ThunkDispatch<RootReducer, undefined, TypeFeedListActions>;
+
+// thunkAction Type
 export type TypeFeedListThunkAction = ThunkAction<void, RootReducer, undefined, TypeFeedListActions>;
 
 // action Type

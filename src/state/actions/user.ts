@@ -1,17 +1,18 @@
 import { sleep } from '../../utils/sleep';
-import { ThunkAction } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { RootReducer } from '../store';
-import { FeedInfo } from '../../@types/feedInfo';
+import { FeedInfo } from '../../@types/FeedInfo';
+import { UserInfo } from '../../@types/UserInfo';
 
 export const SET_USER_INFO = 'SET_USER_INFO' as const;
 export const GET_MY_FEED_REQUEST = 'GET_MY_FEED_REQUEST' as const;
 export const GET_MY_FEED_SUCCESS = 'GET_MY_FEED_SUCCESS' as const;
 export const GET_MY_FEED_FAILURE = 'GET_MY_FEED_FAILURE' as const;
 
-export const setUserInfo = (userId: string) => {
+export const setUserInfo = (user: UserInfo) => {
   return {
     type: SET_USER_INFO,
-    userId,
+    user,
   };
 };
 export const getMyFeedRequest = () => {
@@ -33,7 +34,13 @@ export const getMyFeedFailure = () => {
 
 export const signIn = (): TypeUserInfoThunkAction => async (dispatch) => {
   await sleep(1000);
-  dispatch(setUserInfo('TEST'));
+  dispatch(
+    setUserInfo({
+      uid: 'TEST_UID',
+      name: 'TEST_NAME',
+      profileImage: 'TEST_PROFILE_IMAGE',
+    })
+  );
 };
 
 export const getMyFeedList = (): TypeUserInfoThunkAction => async (dispatch) => {
@@ -48,7 +55,7 @@ export const getMyFeedList = (): TypeUserInfoThunkAction => async (dispatch) => 
           name: 'heesun',
           uid: 'uid_heesun',
         },
-        imageUrl: 'image_url',
+        imageUrl: 'https://docs.expo.dev/static/images/tutorial/background-image.png',
         likeHistory: ['like01', 'like02', 'like03'],
         createAt: new Date().getTime(),
       },
@@ -59,7 +66,7 @@ export const getMyFeedList = (): TypeUserInfoThunkAction => async (dispatch) => 
           name: 'heesun',
           uid: 'uid_heesun',
         },
-        imageUrl: 'image_url',
+        imageUrl: 'https://docs.expo.dev/static/images/tutorial/background-image.png',
         likeHistory: ['like01', 'like02', 'like03'],
         createAt: new Date().getTime(),
       },
@@ -70,7 +77,7 @@ export const getMyFeedList = (): TypeUserInfoThunkAction => async (dispatch) => 
           name: 'heesun',
           uid: 'uid_heesun',
         },
-        imageUrl: 'image_url',
+        imageUrl: 'https://docs.expo.dev/static/images/tutorial/background-image.png',
         likeHistory: ['like01', 'like02', 'like03'],
         createAt: new Date().getTime(),
       },
@@ -78,6 +85,7 @@ export const getMyFeedList = (): TypeUserInfoThunkAction => async (dispatch) => 
   );
 };
 
+export type TypeUserInfoDispatch = ThunkDispatch<RootReducer, undefined, TypeUserInfoThunkActions>;
 export type TypeUserInfoThunkAction = ThunkAction<void, RootReducer, undefined, TypeUserInfoThunkActions>;
 export type TypeUserInfoThunkActions =
   | ReturnType<typeof setUserInfo>

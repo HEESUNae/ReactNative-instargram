@@ -1,6 +1,6 @@
 import { UserInfo } from '../../@types/UserInfo';
-import { FeedInfo } from '../../@types/feedInfo';
-import { TypeUserInfoThunkActions } from '../actions/user';
+import { FeedInfo } from '../../@types/FeedInfo';
+import { GET_MY_FEED_SUCCESS, SET_USER_INFO, TypeUserInfoThunkActions } from '../actions/user';
 
 export type TypeUserInfoReducer = {
   userInfo: UserInfo | null;
@@ -13,5 +13,12 @@ const initState: TypeUserInfoReducer = {
 };
 
 export const userInfoReducer = (state: TypeUserInfoReducer = initState, action: TypeUserInfoThunkActions) => {
+  switch (action.type) {
+    case SET_USER_INFO:
+      return { ...state, userInfo: action.user };
+    case GET_MY_FEED_SUCCESS:
+      return { ...state, myFeedList: action.list };
+  }
+
   return { ...state };
 };
